@@ -7,12 +7,15 @@
 #define on  36 //on-time der LED
 #define ButtonPin 4 //Taster PIN
 
+#define maxBrightness 20
+
 byte leds[12][2] = {{3,1},{0, 2},{1, 2},{3, 2},{0, 3},{1, 3},{2, 3},{1, 0},{2, 0},{3, 0},{0, 1},{2, 1}}; //Array LEDs
 
-bool states[4][4] = {{false, false, false, false}, {false, false, false, false}, {false, false, false, false}, {false, false, false, false}}; //Alle LEDS aus initialisieren
+byte states[4][4] = {{false, false, false, false}, {false, false, false, false}, {false, false, false, false}, {false, false, false, false}}; //Alle LEDS aus initialisieren
 long lastRead = 0;
 long lastChange = 0;
 
+byte count = 1;
 
 //Button functions
 void buttonSetup(){
@@ -54,7 +57,7 @@ void doLeds(){
       for(char j = 0; j < 4; j++){
 
         //Is the pin the same pin or is the pin disabled
-        if(i != j && states[i][j] == true){
+        if(i != j && states[i][j] >= count){
           pinMode(j, OUTPUT);
         }
       }
@@ -73,17 +76,33 @@ void doLeds(){
       delayMicroseconds(4 * (on + off));
     }
   }
+
+  count++;
+  if(count > maxBrightness)
+    count = 1; 
 }
 
-bool setLed(byte led, bool state){
+bool setLed(byte led, bool state, byte brightness){
   if(0 < led < 13){
     byte pin1 = leds[led-1][0];
     byte pin2 = leds[led-1][1];  
-    states[pin1][pin2] = state;
+
+    
+    //states[pin1][pin2] = state;
     if(state == true){
-      states[pin1][pin1] = state;
+      if(brightness > maxBrightness)
+        brightness = maxBrightness;
+        
+      states[pin1][pin2] = brightness;
+      states[pin1][pin1] = true;
+    }else{
+      states[pin1][pin2] = false;
     }
   }
+}
+
+bool setLed(byte led, bool state){
+  setLed(led, state, maxBrightness);
 }
 
 void clearLeds(){

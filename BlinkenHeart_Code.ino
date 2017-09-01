@@ -1,6 +1,6 @@
 #include "BlinkenHeartLib.hpp"
 
-void Rotation1(){
+void Programm1(){
   if((millis() - lastMillis) > 1000){
     lastMillis = millis();
 
@@ -16,7 +16,7 @@ void Rotation1(){
   }
 }
 
-void Rotation2(){
+void Programm2(){
   if((millis() - lastMillis) > 1000){
     lastMillis = millis();
 
@@ -35,7 +35,7 @@ void Rotation2(){
   }  
 }
 
-void Rotation3(){
+void Programm3(){
   if((millis() - lastMillis) > 200){
     lastMillis = millis();
 
@@ -49,11 +49,33 @@ void Rotation3(){
   }
 }
 
+void Programm4(){
+  if((millis() - lastMillis) > 50){
+    lastMillis = millis();
+
+    if(frame > 43)
+      frame = 1;
+
+    clearLeds();
+    if(frame < 22){
+      for(byte i = 1; i < 13; i++){
+        setLed(i, true, 21-frame);
+      }
+    }else if(frame < 44){
+      for(byte i = 1; i < 13; i++){
+        setLed(i, true, frame-22); 
+      }
+    }
+
+    frame++;
+  }
+}
+
 void setup() {
   lastMillis = millis();
   buttonSetup();
 
-  Animationen = 3;
+  Animationen = 4;
 }
 
 void loop() {
@@ -62,15 +84,19 @@ void loop() {
   switch(curAnim){
     case 1:
     {
-      Rotation1();
+      Programm1();
     }break;
     case 2:
     {
-      Rotation2();
+      Programm2();
     }break;
     case 3:
     {
-      Rotation3();
+      Programm3();
+    }break;
+    case 4:
+    {
+      Programm4();
     }break;
     default:
     {
