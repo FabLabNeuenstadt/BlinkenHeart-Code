@@ -1,8 +1,9 @@
 #ifndef VARS_HPP
 #define VARS_HPP
 
-int count =0;
 long lastMillis = 0;
-byte curAnim = 0;
+int frame = 1;
+byte curAnim = 1;
+byte Animationen = 0;
 
 #endif

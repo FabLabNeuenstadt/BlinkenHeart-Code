@@ -3,13 +3,13 @@
 
 #include "Vars.hpp"
 
-#define off 20
-#define on  60
-#define ButtonPin 4
+#define off 6 //off-time der LED
+#define on  36 //on-time der LED
+#define ButtonPin 4 //Taster PIN
 
-byte leds[12][2] = {{3,1},{0, 2},{1, 2},{3, 2},{0, 3},{1, 3},{2, 3},{1, 0},{2, 0},{3, 0},{0, 1},{2, 1}};
+byte leds[12][2] = {{3,1},{0, 2},{1, 2},{3, 2},{0, 3},{1, 3},{2, 3},{1, 0},{2, 0},{3, 0},{0, 1},{2, 1}}; //Array LEDs
 
-bool states[4][4] = {{false, false, false, false}, {false, false, false, false}, {false, false, false, false}, {false, false, false, false}};
+bool states[4][4] = {{false, false, false, false}, {false, false, false, false}, {false, false, false, false}, {false, false, false, false}}; //Alle LEDS aus initialisieren
 long lastRead = 0;
 long lastChange = 0;
 
@@ -25,10 +25,10 @@ void buttonLoop(){
     lastRead = millis();
     if(!digitalRead(ButtonPin) && lastChange == 0){
       lastChange = lastRead;
-      count = 0;
+      frame = 1;
       curAnim++;
-      if(curAnim >= 3)
-        curAnim = 0;
+      if(curAnim >= (Animationen+1))
+        curAnim = 1;
     }
   }
 
@@ -44,28 +44,31 @@ void buttonLoop(){
 void doLeds(){
 
   //Loop through all pins?
-  for(int i = 0; i < 4; i++){
+  for(char i = 0; i < 4; i++){
     
     //Is the pin disabled?
     if(states[i][i] == true){
       pinMode(i, OUTPUT);
       
       //Sub-loop through all pins
-      for(int j = 0; j < 4; j++){
+      for(char j = 0; j < 4; j++){
 
         //Is the pin the same pin or is the pin disabled
         if(i != j && states[i][j] == true){
           pinMode(j, OUTPUT);
-          digitalWrite(i, HIGH);
-          delayMicroseconds(on);
-          digitalWrite(i, LOW);
-          delayMicroseconds(off);
-          pinMode(j, INPUT);
-        }else{
-          delayMicroseconds(off + on);
         }
       }
+
+      digitalWrite(i, HIGH);
+      delayMicroseconds(4*on);
+      digitalWrite(i, LOW);
       pinMode(i, INPUT);
+      delayMicroseconds(4*off);
+      
+      for(char j = 0; j < 4; j++){
+        pinMode(j, INPUT);
+      }
+      
     }else{
       delayMicroseconds(4 * (on + off));
     }
